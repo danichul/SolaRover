@@ -1,24 +1,23 @@
 import os
 
 import numpy as np
-import cv2
+import cv2 as cv
 from tqdm import tqdm
 from sympy import homogeneous_order
 
 
-
-class CameraPoses():
+class CameraPoses:
 
     def __init__(self, data_dir, skip_frames, intrinsic):
 
         self.K = intrinsic
         self.extrinsic = np.array(((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0)))
         self.P = self.K @ self.extrinsic
-        self.orb = cv2.ORB_create(3000)
+        self.orb = cv.ORB_create(3000)
         FLANN_INDEX_LSH = 6
         index_params = dict(algorithm=FLANN_INDEX_LSH, table_number=6, key_size=12, multi_probe_level=1)
         search_params = dict(checks=50)
-        self.flann = cv2.FlannBasedMatcher(indexParams=index_params, searchParams=search_params)
+        self.flann = cv.FlannBasedMatcher(indexParams=index_params, searchParams=search_params)
 
         self.world_points = []
 
@@ -31,9 +30,9 @@ class CameraPoses():
         images = []
 
         for path in tqdm(image_paths[::skip_frames]):
-            img = cv2.imread(path)
+            img = cv.imread(path)
             if img is not None:
-                # images.append(cv2.resize(img, (640,480)))
+                # images.append(cv.resize(img, (640,480)))
                 images.append(img)
 
         return images
@@ -71,10 +70,10 @@ class CameraPoses():
             # Draw matches
             img_matches = np.empty((max(img1.shape[0], img2.shape[0]), img1.shape[1] + img2.shape[1], 3),
                                    dtype=np.uint8)
-            # cv2.drawMatches(img1, kp1, img2, kp2, good_matches, img_matches, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+            # cv.drawMatches(img1, kp1, img2, kp2, good_matches, img_matches, flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
-            # cv2.imshow('Good Matches', img_matches)
-            # cv2.waitKey(50)
+            # cv.imshow('Good Matches', img_matches)
+            # cv.waitKey(50)
 
             # Get the image points form the good matches
             # q1 = [kp1[m.queryIdx] for m in good_matches]
@@ -89,7 +88,7 @@ class CameraPoses():
     def get_pose(self, q1, q2):
 
         # Essential matrix
-        E, mask = cv2.findEssentialMat(q1, q2, self.K)
+        E, mask = cv.findEssentialMat(q1, q2, self.K)
 
         # Decompose the Essential matrix into R and t
         R, t = self.decomp_essential_mat_old(E, q1, q2)
@@ -101,7 +100,7 @@ class CameraPoses():
 
     def decomp_essential_mat(self, E, q1, q2):
 
-        R1, R2, t = cv2.decomposeEssentialMat(E)
+        R1, R2, t = cv.decomposeEssentialMat(E)
         T1 = self._form_transf(R1, np.ndarray.flatten(t))
         T2 = self._form_transf(R2, np.ndarray.flatten(t))
         T3 = self._form_transf(R1, np.ndarray.flatten(-t))
@@ -123,7 +122,7 @@ class CameraPoses():
 
         positives = []
         for P, T in zip(projections, transformations):
-            hom_Q1 = cv2.triangulatePoints(P, P, q1.T, q2.T)
+            hom_Q1 = cv.triangulatePoints(P, P, q1.T, q2.T)
             hom_Q2 = T @ hom_Q1
             # Un-homogenize
             Q1 = hom_Q1[:3, :] / hom_Q1[3, :]
@@ -163,7 +162,7 @@ class CameraPoses():
             P = np.matmul(np.concatenate((self.K, np.zeros((3, 1))), axis=1), T)
 
             # Triangulate the 3D points
-            hom_Q1 = cv2.triangulatePoints(self.P, P, q1.T, q2.T)
+            hom_Q1 = cv.triangulatePoints(self.P, P, q1.T, q2.T)
             # Also seen from cam 2
             hom_Q2 = np.matmul(T, hom_Q1)
 
@@ -183,7 +182,7 @@ class CameraPoses():
             return sum_of_pos_z_Q1 + sum_of_pos_z_Q2, relative_scale
 
         # Decompose the essential matrix
-        R1, R2, t = cv2.decomposeEssentialMat(E)
+        R1, R2, t = cv.decomposeEssentialMat(E)
         t = np.squeeze(t)
 
         # Make a list of the different possible pairs
@@ -209,7 +208,7 @@ class CameraPoses():
         P = np.matmul(np.concatenate((self.K, np.zeros((3, 1))), axis=1), T)
 
         # Triangulate the 3D points
-        hom_Q1 = cv2.triangulatePoints(P, P, q1.T, q2.T)
+        hom_Q1 = cv.triangulatePoints(P, P, q1.T, q2.T)
         # Also seen from cam 2
         hom_Q2 = np.matmul(T, hom_Q1)
 

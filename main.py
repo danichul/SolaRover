@@ -1,7 +1,6 @@
-
 import time
 from CameraPoses import *
-
+import cv2 as cv
 from matplotlib import pyplot as plt
 
 import pytransform3d.transformations as pt
@@ -27,7 +26,7 @@ start_rotation = np.identity(3)
 start_pose = np.concatenate((start_rotation, start_translation), axis=1)
 # print("Start pose: ", start_pose)
 
-cap = cv2.VideoCapture(0)
+cap = cv.VideoCapture(0)
 
 # Check if camera opened successfully
 if cap.isOpened() == False:
@@ -75,30 +74,30 @@ while (cap.isOpened()):
     total_time = end - start
     fps = 1 / total_time
 
-    cv2.putText(new_frame, f'FPS: {int(fps)}', (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    cv.putText(new_frame, f'FPS: {int(fps)}', (20, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-    cv2.putText(new_frame, str(np.round(cur_pose[0, 0], 2)), (260, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
-    cv2.putText(new_frame, str(np.round(cur_pose[0, 1], 2)), (340, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
-    cv2.putText(new_frame, str(np.round(cur_pose[0, 2], 2)), (420, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
-    cv2.putText(new_frame, str(np.round(cur_pose[1, 0], 2)), (260, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
-    cv2.putText(new_frame, str(np.round(cur_pose[1, 1], 2)), (340, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
-    cv2.putText(new_frame, str(np.round(cur_pose[1, 2], 2)), (420, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
-    cv2.putText(new_frame, str(np.round(cur_pose[2, 0], 2)), (260, 130), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
-    cv2.putText(new_frame, str(np.round(cur_pose[2, 1], 2)), (340, 130), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
-    cv2.putText(new_frame, str(np.round(cur_pose[2, 2], 2)), (420, 130), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[0, 0], 2)), (260, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[0, 1], 2)), (340, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[0, 2], 2)), (420, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[1, 0], 2)), (260, 90), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[1, 1], 2)), (340, 90), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[1, 2], 2)), (420, 90), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[2, 0], 2)), (260, 130), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[2, 1], 2)), (340, 130), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[2, 2], 2)), (420, 130), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
 
-    cv2.putText(new_frame, str(np.round(cur_pose[0, 3], 2)), (540, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
-    cv2.putText(new_frame, str(np.round(cur_pose[1, 3], 2)), (540, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
-    cv2.putText(new_frame, str(np.round(cur_pose[2, 3], 2)), (540, 130), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[0, 3], 2)), (540, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[1, 3], 2)), (540, 90), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
+    cv.putText(new_frame, str(np.round(cur_pose[2, 3], 2)), (540, 130), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
 
-    cv2.imshow("img", new_frame)
+    cv.imshow("img", new_frame)
 
     # if frame_counter % 20 == 0:
     # print("FPS: ", fps)
     # print("Frames: ", frame_counter)
 
     # Press Q on keyboard to  exit
-    if cv2.waitKey(25) & 0xFF == ord('q'):
+    if cv.waitKey(25) & 0xFF == ord('q'):
         break
 
 # When everything done, release the video capture object
