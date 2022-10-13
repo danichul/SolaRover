@@ -1,5 +1,6 @@
 import time
 from CameraPoses import *
+import numpy as np
 import cv2 as cv
 from matplotlib import pyplot as plt
 
@@ -73,9 +74,9 @@ while (cap.isOpened()):
 
     total_time = end - start
     fps = 1 / total_time
-
+    # next code is for displaying the fps and the transformation on the image
     cv.putText(new_frame, f'FPS: {int(fps)}', (20, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
+    # rotation
     cv.putText(new_frame, str(np.round(cur_pose[0, 0], 2)), (260, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
     cv.putText(new_frame, str(np.round(cur_pose[0, 1], 2)), (340, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
     cv.putText(new_frame, str(np.round(cur_pose[0, 2], 2)), (420, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
@@ -85,7 +86,7 @@ while (cap.isOpened()):
     cv.putText(new_frame, str(np.round(cur_pose[2, 0], 2)), (260, 130), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
     cv.putText(new_frame, str(np.round(cur_pose[2, 1], 2)), (340, 130), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
     cv.putText(new_frame, str(np.round(cur_pose[2, 2], 2)), (420, 130), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 1)
-
+    # estimate location from the starting position
     cv.putText(new_frame, str(np.round(cur_pose[0, 3], 2)), (540, 50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
     cv.putText(new_frame, str(np.round(cur_pose[1, 3], 2)), (540, 90), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
     cv.putText(new_frame, str(np.round(cur_pose[2, 3], 2)), (540, 130), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
@@ -119,7 +120,7 @@ cap.release()
 
     estimated_camera_pose_x, estimated_camera_pose_y = cur_pose[0, 3], cur_pose[2, 3]
 """
-
+# rest of this code is for plotting the estimated path
 number_of_frames = 20
 image_size = np.array([640, 480])
 # image_size = np.array([1920, 1080])
